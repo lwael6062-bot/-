@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>نادي قضاة بني سويف</title>
+  
+  <!-- Bootstrap 5 RTL & Font Awesome -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary-color: #173C32;
+      --accent-color: #c5a059;
+      --bg-light: #f8f9fa;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #f0f2f5;
+      color: #333;
+    }
+
+    .navbar-custom {
+      background-color: var(--primary-color);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-custom {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+      background-color: #fff;
+    }
+
+    .card-header-custom {
+      background-color: var(--primary-color);
+      color: #fff;
+      border-radius: 12px 12px 0 0 !important;
+      font-weight: 700;
+    }
+
+    .btn-primary-custom {
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+    }
+
+    .btn-primary-custom:hover {
+      background-color: #112d26;
+      color: #fff;
+    }
+
+    .btn-accent {
+      background-color: var(--accent-color);
+      color: #fff;
+      border: none;
+    }
+
+    .btn-accent:hover {
+      background-color: #a88442;
+      color: #fff;
+    }
+
+    .table-container {
+      max-height: 500px;
+      overflow-y: auto;
+    }
+
+    th {
+      background-color: var(--primary-color) !important;
+      color: #fff !important;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    .nav-tabs .nav-link.active {
+      background-color: var(--primary-color);
+      color: #fff;
+      border-color: var(--primary-color);
+    }
+
+    .nav-tabs .nav-link {
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    #loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay">
+    <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;"></div>
+    <h5 class="mt-3 text-dark fw-bold">جاري تحميل البيانات...</h5>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark navbar-custom mb-4 py-3">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand fw-bold fs-4" href="#">
+        <i class="fa-solid fa-scale-balanced me-2 text-warning"></i>
+        نادي قضاة بني سويف
+      </a>
+      <a id="sheetBtn" href="#" target="_blank" class="btn btn-outline-light btn-sm">
+        <i class="fa-solid fa-file-excel me-1"></i> فتح الشيت
+      </a>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-4">
+    <div class="row g-4">
+      
+      <!-- Form Section -->
+      <div class="col-lg-5">
+        <div class="card card-custom">
+          <div class="card-header card-header-custom py-3">
+            <i class="fa-solid fa-user-plus me-2"></i> بيانات العضو والخدمات
+          </div>
+          <div class="card-body p-4">
+            <form id="memberForm">
+              
+              <!-- البيانات الأساسية -->
+              <h6 class="text-secondary fw-bold mb-3 border-bottom pb-2">
+                <i class="fa-solid fa-address-card me-1"></i> البيانات الأساسية
+              </h6>
+              
+              <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">رقم العضوية <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="membershipNo" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">اسم العضو <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">تاريخ العضوية</label>
+                  <input type="date" class="form-control" id="joinDate">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">نوع العضوية</label>
+                  <select class="form-select" id="memberType">
+                    <option value="عامل">عامل</option>
+                    <option value="منتسب">منتسب</option>
+                    <option value="فخري">فخري</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">جهة العمل</label>
+                  <input type="text" class="form-control" id="workplace">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label fw-semibold">الوحدة الحسابية</label>
+                  <input type="text" class="form-control" id="accountUnit">
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-semibold">العنوان بالتفصيل</label>
+                  <input type="text" class="form-control" id="address">
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-semibold">عنوان المراسلات</label>
+                  <input type="text" class="form-control" id="mailAddress">
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-semibold">قيمة الاشتراك</label>
+                  <input type="number" class="form-control" id="subscription" value="0">
+                </div>
+              </div>
+
+              <!-- الخدمات والمشروعات -->
+              <h6 class="text-secondary fw-bold mb-3 border-bottom pb-2">
+                <i class="fa-solid fa-list-check me-1"></i> الخدمات والمشروعات
+              </h6>
+
+              <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">العمرة</label>
+                  <select class="form-select" id="umrah">
+                    <option value="لا">لا</option>
+                    <option value="نعم">نعم</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">النشاط الرياضي</label>
+                  <select class="form-select" id="sports">
+                    <option value="لا">لا</option>
+                    <option value="نعم">نعم</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-semibold">المكتبة</label>
+                  <select class="form-select" id="library">
+                    <option value="لا">لا</option>
+                    <option value="نعم">نعم</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <label class="form-label fw-semibold">المشروع المستفاد منه</label>
+                  <input type="text" class="form-control" id="project" placeholder="اسم المشروع إن وجد">
+                </div>
+              </div>
+
+              <!-- الأقساط -->
+              <h6 class="text-secondary fw-bold mb-3 border-bottom pb-2">
+                <i class="fa-solid fa-coins me-1"></i> الأقساط (جنيه)
+              </h6>
+
+              <div class="row g-2 mb-4">
+                <div class="col-6 col-md-3">
+                  <label class="form-label small fw-semibold">القسط الأول</label>
+                  <input type="number" class="form-control" id="installment1" value="0">
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label small fw-semibold">القسط الثاني</label>
+                  <input type="number" class="form-control" id="installment2" value="0">
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label small fw-semibold">القسط الثالث</label>
+                  <input type="number" class="form-control" id="installment3" value="0">
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label small fw-semibold">القسط الرابع</label>
+                  <input type="number" class="form-control" id="installment4" value="0">
+                </div>
+              </div>
+
+              <!-- Submit Buttons -->
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary-custom flex-grow-1 py-2 fw-bold">
+                  <i class="fa-solid fa-floppy-disk me-1"></i> حفظ البيانات
+                </button>
+                <button type="button" class="btn btn-outline-secondary py-2" onclick="resetForm()">
+                  <i class="fa-solid fa-rotate-left me-1"></i> تفريغ
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table & Search Section -->
+      <div class="col-lg-7">
+        <div class="card card-custom">
+          <div class="card-header card-header-custom py-3 d-flex justify-content-between align-items-center">
+            <span><i class="fa-solid fa-users me-2"></i> قائمة الأعضاء</span>
+            <button class="btn btn-sm btn-accent" onclick="loadMembers()">
+              <i class="fa-solid fa-arrows-rotate me-1"></i> تحديث
+            </button>
+          </div>
+          <div class="card-body p-4">
+            
+            <!-- البحث -->
+            <div class="input-group mb-3">
+              <span class="input-group-text bg-white"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+              <input type="text" id="searchInput" class="form-control" placeholder="ابحث برقم العضوية أو الاسم..." onkeyup="filterMembers()">
+            </div>
+
+            <!-- جدول البيانات -->
+            <div class="table-container border rounded">
+              <table class="table table-hover table-striped align-middle mb-0 text-center" id="membersTable">
+                <thead>
+                  <tr>
+                    <th>رقم العضوية</th>
+                    <th>اسم العضو</th>
+                    <th>جهة العمل</th>
+                    <th>المشروع</th>
+                    <th>إجراء</th>
+                  </tr>
+                </thead>
+                <tbody id="tableBody">
+                  <tr>
+                    <td colspan="5" class="text-muted py-4">جاري التحميل...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- JavaScript Code -->
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx_BYTN9kU2xelcuE7x-IZO5K_nDePE2cw1F0R3eoYyCVz_UZNe0g0R9nmHbIzBimGWTg/exec';
+    let allMembers = [];
+
+    window.onload = function() {
+      loadMembers();
+    };
+
+    function showLoading(show) {
+      document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+    }
+
+    // جلب قائمة الأعضاء
+    function loadMembers() {
+      showLoading(true);
+      fetch(`${SCRIPT_URL}?action=getMembers`)
+        .then(res => res.json())
+        .then(data => {
+          allMembers = data;
+          renderTable(data);
+          showLoading(false);
+        })
+        .catch(err => {
+          console.error(err);
+          // تجربة الاستدعاء المباشر في حالة عدم دعم GET عبر الروابط المباشرة
+          renderTable([]);
+          showLoading(false);
+        });
+    }
+
+    // عرض الأعضاء بالجدول
+    function renderTable(data) {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+
+      if (!data || data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-muted py-4">لا توجد بيانات مسجلة</td></tr>';
+        return;
+      }
+
+      data.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="fw-bold">${m.membershipNo}</td>
+          <td>${m.name}</td>
+          <td>${m.workplace || '-'}</td>
+          <td>${m.project || '-'}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary" onclick='editMember(${JSON.stringify(m)})'>
+              <i class="fa-solid fa-pen"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // فلترة البحث
+    function filterMembers() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const filtered = allMembers.filter(m => 
+        String(m.membershipNo).toLowerCase().includes(query) ||
+        String(m.name).toLowerCase().includes(query)
+      );
+      renderTable(filtered);
+    }
+
+    // تعبئة النموذج للتعديل
+    function editMember(m) {
+      document.getElementById('membershipNo').value = m.membershipNo || '';
+      document.getElementById('name').value = m.name || '';
+      document.getElementById('joinDate').value = m.joinDate || '';
+      document.getElementById('memberType').value = m.memberType || 'عامل';
+      document.getElementById('workplace').value = m.workplace || '';
+      document.getElementById('accountUnit').value = m.accountUnit || '';
+      document.getElementById('address').value = m.address || '';
+      document.getElementById('mailAddress').value = m.mailAddress || '';
+      document.getElementById('subscription').value = m.subscription || 0;
+      document.getElementById('umrah').value = m.umrah || 'لا';
+      document.getElementById('sports').value = m.sports || 'لا';
+      document.getElementById('library').value = m.library || 'لا';
+      document.getElementById('project').value = m.project || '';
+      document.getElementById('installment1').value = m.installment1 || 0;
+      document.getElementById('installment2').value = m.installment2 || 0;
+      document.getElementById('installment3').value = m.installment3 || 0;
+      document.getElementById('installment4').value = m.installment4 || 0;
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // حفظ / تحديث البيانات
+    document.getElementById('memberForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const payload = {
+        membershipNo: document.getElementById('membershipNo').value,
+        name: document.getElementById('name').value,
+        joinDate: document.getElementById('joinDate').value,
+        memberType: document.getElementById('memberType').value,
+        workplace: document.getElementById('workplace').value,
+        accountUnit: document.getElementById('accountUnit').value,
+        address: document.getElementById('address').value,
+        mailAddress: document.getElementById('mailAddress').value,
+        subscription: document.getElementById('subscription').value,
+        umrah: document.getElementById('umrah').value,
+        sports: document.getElementById('sports').value,
+        library: document.getElementById('library').value,
+        project: document.getElementById('project').value,
+        installment1: document.getElementById('installment1').value,
+        installment2: document.getElementById('installment2').value,
+        installment3: document.getElementById('installment3').value,
+        installment4: document.getElementById('installment4').value
+      };
+
+      showLoading(true);
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(() => {
+        alert('تم إرسال البيانات بنجاح!');
+        resetForm();
+        setTimeout(loadMembers, 1500);
+      })
+      .catch(err => {
+        console.error(err);
+        alert('حدث خطأ أثناء الاتصال بالسيرفر.');
+        showLoading(false);
+      });
+    });
+
+    function resetForm() {
+      document.getElementById('memberForm').reset();
+    }
+  </script>
+</body>
+</html>
